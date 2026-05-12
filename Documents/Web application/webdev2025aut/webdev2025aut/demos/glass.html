@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background: url("./img/bg2.jpg") top left / cover no-repeat fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            font-size: 3rem;
+            text-align: center;
+            padding: 5vmax;
+        }
+
+        @keyframes scaleToggleCloud {
+            0% {
+                scale: 1 1;
+            }
+
+            50% {
+                scale: 1.2 0.9;
+            }
+
+            100% {
+                scale: 1 1;
+            }
+        }
+
+        @keyframes scaleToggleSun {
+            0% {
+                scale: 1 1;
+            }
+
+            50% {
+                scale: 1.2 0.9;
+            }
+
+            100% {
+                scale: 1 1;
+            }
+        }
+
+        @keyframes scaleToggleMoon {
+            0% {
+                scale: 1 1;
+            }
+
+            50% {
+                scale: 1.2 0.9;
+            }
+
+            100% {
+                scale: 1 1;
+            }
+        }
+
+        .main-container {
+            width: 90vw;
+
+            .btns {
+                /* container query iig ashiglah bolomjtoi bolgoj baina */
+                container-type: size;
+                margin: 0 auto;
+                width: 70vw;
+                height: 20vh;
+                border: 3px solid rgba(255, 255, 255, 0.1);
+                border-radius: 2em / 2em;
+                display: flex;
+                align-items: center;
+                justify-content: space-evenly;
+
+                .btn_switch {
+                    position: absolute;
+                    width: 25cqw;
+                    height: 80cqh;
+                    backdrop-filter: blur(8px);
+                    border-radius: 2em;
+                    border: 4px solid transparent;
+                    background: linear-gradient(135deg, #bbb, white 30%) border-box;
+                        /* linear-gradient(45deg, #ff00cc44, #3333ff44) border-box; */
+                    background-clip: padding-box, border-box;
+                    z-index: -1;
+                }
+
+                /* .btn_switch::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                    margin: -4px;
+                    z-index: -2;
+                    background: linear-gradient(45deg, #fff, #f00);
+                    border-radius: 2em;
+                    background-clip: padding-box;
+                } */
+
+                &:has(input[value="cloud"]:checked) .btn_switch {
+                    translate: -35cqw 0;
+                    transform-origin: left;
+                    transition: translate 0.3s ease-in-out;
+                    animation: scaleToggleCloud 440ms ease;
+                }
+
+                &:has(input[value="sun"]:checked) .btn_switch {
+                    translate: 0 0;
+                    transition: translate 0.3s ease-in-out;
+                    animation: scaleToggleSun 440ms ease;
+                }
+
+                &:has(input[value="moon"]:checked) .btn_switch {
+                    translate: 35cqw 0;
+                    transform-origin: right;
+                    transition: translate 0.3s ease-in-out;
+                    animation: scaleToggleMoon 440ms ease;
+                }
+
+                &>label {
+                    /* border: 1px solid #6666; */
+
+                    width: 30cqw;
+                    height: 50cqh;
+
+                    input {
+
+                        display: none;
+                    }
+                }
+
+
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <h1>Glass</h1>
+        <p>This is a demo of the glass effect.</p>
+        <div class="btns">
+            <div class="btn_switch">
+                <div></div>
+            </div>
+            <label>🌨️
+                <input type="radio" name="switcher" checked value="cloud">
+            </label>
+            <label>☀️
+                <input type="radio" name="switcher" value="sun">
+            </label>
+            <label>🌙
+                <input type="radio" name="switcher" value="moon">
+            </label>
+
+        </div>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos saepe nihil fugiat molestiae necessitatibus
+            labore
+            nostrum culpa atque deserunt, esse expedita earum ipsum omnis ducimus sint consequatur corrupti, itaque eum
+            harum recusandae obcaecati. Laudantium, optio sapiente beatae molestiae nostrum reprehenderit minus vel ab
+            quam
+            ex sed at consequatur distinctio, in iure amet repudiandae. Ipsum blanditiis ullam consequatur? Nesciunt
+            porro
+            consequatur iste sequi nobis provident asperiores rerum tempore, hic voluptatibus. Cum dicta id maxime
+            reprehenderit minima. Eius reiciendis quo, quidem hic fugiat ut nisi voluptatum odio. Maxime sint neque
+            quibusdam non consequatur adipisci, earum, sapiente commodi corporis incidunt a, illo reiciendis sit! Sequi
+            rem
+            eius a ipsam recusandae consequuntur omnis! Explicabo voluptatibus nulla eligendi alias expedita soluta
+            facilis
+            harum, hic tempora exercitationem officia laboriosam, neque dolores sapiente vel cumque maxime minima
+            corrupti
+            ipsa, atque assumenda dolorem recusandae! </p>
+    </div>
+
+</body>
+
+</html>

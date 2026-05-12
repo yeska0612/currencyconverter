@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Web development - CSS - Background properties</title>
+    <style>
+        :root {
+            --preview-w: 500px;
+            --preview-h: 500px;
+            --accent: #632E62;
+            --muted: #666;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+        }
+
+        body {
+            margin: 24px;
+            color: #111
+        }
+
+        h1 {
+            color: var(--accent);
+            margin-bottom: 8px
+        }
+
+        .layout {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start
+        }
+
+        .controls {
+            width: 500px;
+            max-width: 40vw
+        }
+
+        .controls fieldset {
+            border: 1px solid #e6e6e6;
+            padding: 12px;
+            margin-bottom: 12px
+        }
+
+        .controls label {
+            display: block;
+            font-size: 13px;
+            margin: 8px 0 4px
+        }
+
+        select,
+        input[type=text],
+        input[type=color] {
+            width: 100%;
+            padding: 6px;
+            box-sizing: border-box
+        }
+
+        .preview {
+            flex: 1;
+        }
+
+        .preview-box {
+            width: var(--preview-w);
+            max-width: calc(100% - 20px);
+            height: var(--preview-h);
+            border: 2px solid #ddd;
+            position: relative;
+            overflow: visible;
+
+        }
+
+        /* make the preview box itself scrollable so background-attachment: local can be demonstrated */
+        .preview-inner {
+            width: 100%;
+            min-height: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+        }
+
+        .preview-content {
+            background:#632E62dd; 
+            /* rgba(255, 255, 255, 0.85); */
+            padding: 0;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 2px
+        }
+
+        /* make the inner area the scroll container so 'background-attachment: local' can be demonstrated */
+        .scroll-area {
+            max-height: calc(var(--preview-h) - 150px);
+            overflow: auto;
+            padding: 4px;
+            box-sizing: border-box;
+            /* color: hsl(from var(--accent) calc(h + 90 ) 95% 90%); */
+            /* color:transparent; */
+            /* background: rgba(255, 255, 0, 0.85); */
+            border-radius: 6px;
+            background-color:#632E6299;
+            font-size:48px;
+            font-weight: 900;
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 8px;
+            z-index: 2
+        }
+
+        .css-output {
+            white-space: pre;
+            background: #f6f6f8;
+            border: 1px solid #eee;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 13px
+        }
+
+        .row {
+            display: flex;
+            gap: 8px
+        }
+
+        .small {
+            width: 50%
+        }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .img-preview {
+            max-height: 60px;
+            display: block;
+            margin-top: 8px
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Web development - CSS - Background properties</h1>
+    <p class="muted">Use the controls to experiment with different CSS background properties. The preview updates live
+        and shows the CSS used.</p>
+
+    <div class="layout">
+        <div class="controls">
+            <fieldset>
+                <legend>Background Image Layers</legend>
+                <div id="layers-container">
+                    <!-- Layers will be inserted here -->
+                </div>
+
+                <div style="margin-top:8px; display:flex; gap:8px; align-items:center">
+                    <input id="bg-image-url" type="url" placeholder="https://example.com/image.jpg" style="flex:1" />
+                    <button id="add-url-layer" class="btn" type="button">Add URL</button>
+                </div>
+
+                <label for="bg-image-file" style="margin-top:8px; display:block">Upload image to add layer</label>
+                <input id="bg-image-file" type="file" accept="image/*" />
+                <div style="margin-top:8px">
+                    <button id="add-empty-layer" class="btn" type="button">Add empty layer</button>
+                </div>
+                <small class="muted">Layers are painted in order: first-listed is topmost. Use Remove to delete a layer.</small>
+            </fieldset>
+
+            <fieldset>
+                <legend>Core Properties</legend>
+                <label for="bg-color">background-color</label>
+                <div style="display:flex; gap:8px; align-items:center">
+                    <input id="bg-color" type="color" value="#ffffff" />
+                    <div style="font-size:13px">
+                        <label style="display:block"><input type="radio" name="bg-mode" value="solid" checked /> Solid</label>
+                        <label style="display:block"><input type="radio" name="bg-mode" value="gradient" /> Gradient</label>
+                    </div>
+                </div>
+                <div id="gradient-controls" style="margin-top:8px; display:none">
+                    <label for="gradient-type">Gradient type</label>
+                    <select id="gradient-type">
+                        <option value="linear">linear</option>
+                        <option value="radial">radial</option>
+                    </select>
+                    <label for="gradient-angle">Angle (deg - linear only)</label>
+                    <input id="gradient-angle" type="number" value="90" />
+                    <label for="gradient-stop1">Stop 1</label>
+                    <input id="gradient-stop1" type="color" value="#ffffff" />
+                    <label for="gradient-stop2">Stop 2</label>
+                    <input id="gradient-stop2" type="color" value="#000000" />
+                </div>
+
+                <label for="bg-attachment">background-attachment</label>
+                <select id="bg-attachment">
+                    <option value="scroll">scroll</option>
+                    <option value="fixed">fixed</option>
+                    <option value="local">local</option>
+                </select>
+
+                <label for="bg-repeat">background-repeat</label>
+                <select id="bg-repeat">
+                    <option value="repeat">repeat</option>
+                    <option value="repeat-x">repeat-x</option>
+                    <option value="repeat-y">repeat-y</option>
+                    <option value="no-repeat">no-repeat</option>
+                    <option value="space">space</option>
+                    <option value="round">round</option>
+                </select>
+
+                <label for="bg-size">background-size</label>
+                <select id="bg-size">
+                    <option value="auto">auto</option>
+                    <option value="cover">cover</option>
+                    <option value="contain">contain</option>
+                    <option value="100% 100%">100% 100%</option>
+                </select>
+                
+                <label for="bg-blend-mode">background-blend-mode</label>
+                <select id="bg-blend-mode">
+                    <option value="normal">normal</option>
+                    <option value="multiply">multiply</option>
+                    <option value="screen">screen</option>
+                    <option value="overlay">overlay</option>
+                    <option value="darken">darken</option>
+                    <option value="lighten">lighten</option>
+                    <option value="color-dodge">color-dodge</option>
+                    <option value="color-burn">color-burn</option>
+                    <option value="hard-light">hard-light</option>
+                    <option value="soft-light">soft-light</option>
+                    <option value="difference">difference</option>
+                    <option value="exclusion">exclusion</option>
+                    <option value="hue">hue</option>
+                    <option value="saturation">saturation</option>
+                    <option value="color">color</option>
+                    <option value="luminosity">luminosity</option>
+                </select>
+            </fieldset>
+
+            <fieldset>
+                <legend>Position &amp; Origin/Clip</legend>
+                <label for="bg-position">background-position</label>
+                <select id="bg-position">
+                    <optgroup label="Common positions">
+                        <option value="left top">left top</option>
+                        <option value="left center">left center</option>
+                        <option value="left bottom">left bottom</option>
+                        <option value="center top">center top</option>
+                        <option value="center center">center center</option>
+                        <option value="center bottom">center bottom</option>
+                        <option value="right top">right top</option>
+                        <option value="right center">right center</option>
+                        <option value="right bottom">right bottom</option>
+                    </optgroup>
+                    <optgroup label="Offsets (px / em)">
+                        <option value="left 10px top 10px">left 10px top 10px</option>
+                        <option value="left 20px top 20px">left 20px top 20px</option>
+                        <option value="left 40px top 10px">left 40px top 10px</option>
+                        <option value="left 1em top 1em">left 1em top 1em</option>
+                        <option value="left 2em top 2em">left 2em top 2em</option>
+                        <option value="10px 10px">10px 10px</option>
+                        <option value="20px 20px">20px 20px</option>
+                    </optgroup>
+                </select>
+
+                <label for="bg-origin">background-origin</label>
+                <select id="bg-origin">
+                    <option value="padding-box">padding-box</option>
+                    <option value="border-box">border-box</option>
+                    <option value="content-box">content-box</option>
+                </select>
+
+                <label for="bg-clip">background-clip</label>
+                <select id="bg-clip">
+                    <option value="border-box">border-box</option>
+                    <option value="padding-box">padding-box</option>
+                    <option value="content-box">content-box</option>
+                    <option value="text">text</option>
+                </select>
+            </fieldset>
+
+            <fieldset>
+                <legend>Helpers</legend>
+                <label>Show CSS output</label>
+                <div class="row">
+                    <button id="copy-css" class="btn" type="button">Copy CSS</button>
+                    <button id="reset" type="button" class="btn" style="background:#666">Reset</button>
+                </div>
+                <label for="scroll-text-color" style="margin-top:8px; display:block">Scroll-area text color</label>
+                <div class="row" style="margin-top:6px">
+                    <input id="scroll-text-color" type="color" value="#000000" style="width:60px; padding:0" />
+                    <label style="display:flex; align-items:center; gap:8px; margin-left:8px"><input id="scroll-text-transparent" type="checkbox" /> Transparent text</label>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="preview">
+            <div class="preview-box" id="preview-box">
+                <div class="preview-inner" id="preview-inner">
+                    <div class="preview-content sticky-header">
+                        <h2>Preview area</h2>
+                        <p class="muted">Scroll to see attachment — choose <code>local</code> to tie the background to this content.</p>
+                        </div>
+
+                    <div class="scroll-area" id="scroll-area">
+                        <h2>Scroll Area</h2>
+                        <!-- Tall filler content to force a scroll bar inside the preview -->
+                        <p>Content block 1 — scroll down to see how background-attachment behaves.</p>
+                        <p style="margin-top:20px">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec
+                            odio. Praesent libero. Sed cursus ante dapibus diam.</p>
+                        <p style="margin-top:20px">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Qui debitis
+                            illum minus praesentium impedit mollitia, nulla et expedita, sapiente, illo recusandae rem
+                            voluptas eum consequuntur magnam repellendus excepturi eveniet sit similique architecto
+                            inventore enim. Obcaecati numquam rem blanditiis sint excepturi explicabo quis quam
+                            voluptate minus cupiditate saepe eligendi atque modi reiciendis iusto earum adipisci quas,
+                            nulla pariatur ut. Aperiam dolore labore officia rerum nobis aut quis neque autem numquam
+                            mollitia sed commodi sit quia, reprehenderit sequi sunt deleniti quaerat! Asperiores, quam
+                            repudiandae sequi, dicta eius qui sit similique maxime, cupiditate consequatur ad alias
+                            culpa recusandae unde esse fugit minus libero?</p>
+                        <p style="margin-top:20px">Block 3 — end of content.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top:12px">Generated CSS</h3>
+            <div class="css-output" id="css-output"></div>
+        </div>
+    </div>
+
+    <script>
+        // Helper: element refs
+        const refs = {
+            imageUrl: document.getElementById('bg-image-url'),
+            imageFile: document.getElementById('bg-image-file'),
+            imageThumb: document.getElementById('bg-image-thumb'),
+            clearImage: document.getElementById('clear-image'),
+            color: document.getElementById('bg-color'),
+            attachment: document.getElementById('bg-attachment'),
+            repeat: document.getElementById('bg-repeat'),
+            size: document.getElementById('bg-size'),
+            position: document.getElementById('bg-position'),
+            origin: document.getElementById('bg-origin'),
+            clip: document.getElementById('bg-clip'),
+            previewBox: document.getElementById('preview-box'),
+            previewInner: document.getElementById('preview-inner'),
+            previewContent: document.querySelector('.preview-content'),
+            bgModeRadios: document.getElementsByName('bg-mode'),
+            gradientControls: document.getElementById('gradient-controls'),
+            gradientType: document.getElementById('gradient-type'),
+            gradientAngle: document.getElementById('gradient-angle'),
+            gradientStop1: document.getElementById('gradient-stop1'),
+            gradientStop2: document.getElementById('gradient-stop2'),
+            blendMode: document.getElementById('bg-blend-mode'),
+            cssOutput: document.getElementById('css-output'),
+            copyCss: document.getElementById('copy-css'),
+            scrollTextColor: document.getElementById('scroll-text-color'),
+            scrollTextTransparent: document.getElementById('scroll-text-transparent'),
+            resetBtn: document.getElementById('reset')
+        };
+
+        let currentImage = '';
+        // new: support multiple image layers
+        const layers = []; // each item: { id, src }
+
+        function renderLayers(){
+            const container = document.getElementById('layers-container');
+            container.innerHTML = '';
+            layers.forEach((ly, idx)=>{
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.alignItems = 'center';
+                div.style.gap = '8px';
+                div.style.marginBottom = '6px';
+                const thumb = document.createElement('img');
+                thumb.src = ly.src || '';
+                thumb.alt = '';
+                thumb.style.width = '48px';
+                thumb.style.height = '48px';
+                thumb.style.objectFit = 'cover';
+                const label = document.createElement('div');
+                label.style.flex = '1';
+                label.textContent = ly.src ? ly.src.split('/').pop() : '(empty layer)';
+                const remove = document.createElement('button');
+                remove.className = 'btn';
+                remove.textContent = 'Remove';
+                remove.addEventListener('click', ()=>{ layers.splice(idx,1); renderLayers(); updatePreview(); });
+                div.appendChild(thumb);
+                div.appendChild(label);
+                div.appendChild(remove);
+                container.appendChild(div);
+            });
+        }
+
+        // add layer helpers
+        function addLayer(src){
+            layers.unshift({ id: Date.now().toString(36), src: src || '' });
+            renderLayers();
+            updatePreview();
+        }
+
+        // Return either black or white depending on perceived brightness of a hex color
+        function getContrastingTextColor(hex) {
+            if (!hex) return '#000';
+            // strip #
+            const h = hex.replace('#', '');
+            const r = parseInt(h.substring(0, 2), 16);
+            const g = parseInt(h.substring(2, 4), 16);
+            const b = parseInt(h.substring(4, 6), 16);
+            // YIQ formula
+            const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            return yiq >= 128 ? '#000' : '#fff';
+        }
+
+        function updatePreview() {
+            const color = refs.color.value;
+            const attachment = refs.attachment.value;
+            const repeat = refs.repeat.value;
+            const size = refs.size.value;
+            const position = refs.position.value;
+            const origin = refs.origin.value;
+            const clip = refs.clip.value;
+            const blendMode = refs.blendMode ? refs.blendMode.value : 'normal';
+
+            // background-image: build from layers (topmost first)
+            const layerImages = layers.map(l => l.src).filter(Boolean);
+            const imagesList = layerImages.length ? layerImages.map(s=>`url("${s}")`).join(', ') : (currentImage ? `url("${currentImage}")` : 'none');
+            const imageValue = imagesList;
+
+                // determine if using gradient for background color
+                let useGradient = false;
+                for(const r of refs.bgModeRadios){ if(r.checked && r.value === 'gradient') useGradient = true; }
+                let gradientValue = '';
+                if(useGradient){
+                    const t = refs.gradientType.value || 'linear';
+                    const a = (refs.gradientAngle && refs.gradientAngle.value) ? refs.gradientAngle.value+'deg' : '90deg';
+                    const s1 = refs.gradientStop1.value || '#fff';
+                    const s2 = refs.gradientStop2.value || '#000';
+                    if(t === 'linear') gradientValue = `linear-gradient(${a}, ${s1}, ${s2})`;
+                    else gradientValue = `radial-gradient(circle, ${s1}, ${s2})`;
+                }
+
+            // Apply styles to preview
+            const box = refs.previewBox;
+            const scrollArea = document.getElementById('scroll-area');
+
+            // make the preview header/content match the selected background color (or gradient)
+            if (refs.previewContent) {
+                if(useGradient){
+                    refs.previewContent.style.backgroundImage = gradientValue;
+                    refs.previewContent.style.backgroundColor = '';
+                    refs.previewContent.style.color = getContrastingTextColor(refs.gradientStop1.value || color);
+                } else {
+                    refs.previewContent.style.backgroundImage = '';
+                    refs.previewContent.style.backgroundColor = color;
+                    refs.previewContent.style.color = getContrastingTextColor(color);
+                }
+            }
+
+            // Clear background on both first
+            box.style.backgroundImage = '';
+            scrollArea.style.backgroundImage = '';
+
+            if (attachment === 'local') {
+                // For local, attach the background to the scrolling content element so it moves with content
+                if(useGradient){
+                    // gradient as background-image; combine with image layers if present (image first, gradient behind)
+                    const combined = layerImages.length ? `${layerImages.map(s=>`url("${s}")`).join(', ')}, ${gradientValue}` : gradientValue;
+                    scrollArea.style.backgroundImage = combined;
+                    scrollArea.style.backgroundColor = '';
+                } else {
+                    scrollArea.style.backgroundColor = color;
+                    scrollArea.style.backgroundImage = imageValue;
+                }
+                scrollArea.style.backgroundAttachment = 'local';
+                scrollArea.style.backgroundBlendMode = blendMode;
+                scrollArea.style.backgroundRepeat = repeat;
+                scrollArea.style.backgroundSize = size;
+                scrollArea.style.backgroundPosition = position;
+                scrollArea.style.backgroundOrigin = origin;
+                scrollArea.style.backgroundClip = clip;
+                // match content text color for readability unless user set transparency or a custom color
+                if (refs.scrollTextTransparent && refs.scrollTextTransparent.checked) {
+                    scrollArea.style.color = 'transparent';
+                } else if (refs.scrollTextColor) {
+                    scrollArea.style.color = refs.scrollTextColor.value || getContrastingTextColor(color);
+                } else {
+                    scrollArea.style.color = getContrastingTextColor(color);
+                }
+                // ensure box shows subtle bg color if no image
+                box.style.backgroundColor = 'transparent';
+            } else {
+                // default: apply background to the preview box itself
+                if(useGradient){
+                    const combined = layerImages.length ? `${layerImages.map(s=>`url("${s}")`).join(', ')}, ${gradientValue}` : gradientValue;
+                    box.style.backgroundImage = combined;
+                    box.style.backgroundColor = '';
+                } else {
+                    box.style.backgroundColor = color;
+                    box.style.backgroundImage = imageValue;
+                }
+                box.style.backgroundAttachment = attachment;
+                box.style.backgroundBlendMode = blendMode;
+                box.style.backgroundRepeat = repeat;
+                box.style.backgroundSize = size;
+                box.style.backgroundPosition = position;
+                box.style.backgroundOrigin = origin;
+                box.style.backgroundClip = clip;
+                // Reset scrollArea styling for when background isn't local
+                // keep the user-chosen scroll text color if set, otherwise clear
+                if (refs.scrollTextTransparent && refs.scrollTextTransparent.checked) {
+                    scrollArea.style.color = 'transparent';
+                } else if (refs.scrollTextColor) {
+                    scrollArea.style.color = refs.scrollTextColor.value || '';
+                } else {
+                    scrollArea.style.color = '';
+                }
+            }
+
+            // Show CSS output (include gradient when used)
+            let cssText = '';
+            if(useGradient){
+                cssText += `background-image: ${gradientValue};\n`;
+            } else {
+                cssText += `background-color: ${color};\n`;
+            }
+            cssText += `background-image: ${imageValue};\nbackground-attachment: ${attachment};\nbackground-repeat: ${repeat};\nbackground-size: ${size};\nbackground-position: ${position};\nbackground-origin: ${origin};\nbackground-clip: ${clip};\nbackground-blend-mode: ${blendMode};`;
+            refs.cssOutput.textContent = cssText;
+        }
+
+        // Initialize event listeners
+        ['change', 'input'].forEach(evt => {
+            refs.color.addEventListener(evt, updatePreview);
+            refs.attachment.addEventListener(evt, updatePreview);
+            refs.repeat.addEventListener(evt, updatePreview);
+            refs.size.addEventListener(evt, updatePreview);
+            refs.position.addEventListener(evt, updatePreview);
+            refs.origin.addEventListener(evt, updatePreview);
+            refs.clip.addEventListener(evt, updatePreview);
+            if(refs.blendMode) refs.blendMode.addEventListener(evt, updatePreview);
+            refs.imageUrl.addEventListener('change', () => {
+                const val = refs.imageUrl.value.trim();
+                if (!val) { currentImage = ''; refs.imageThumb.src = ''; refs.imageThumb.style.display = 'none'; }
+                else { currentImage = val; refs.imageThumb.src = val; refs.imageThumb.style.display = 'block'; }
+                updatePreview();
+            });
+        });
+
+        // show/hide gradient controls based on bg-mode
+        if(refs.bgModeRadios){
+            for(const r of refs.bgModeRadios){
+                r.addEventListener('change', ()=>{
+                    if(refs.gradientControls) refs.gradientControls.style.display = (r.value === 'gradient' && r.checked) ? 'block' : 'none';
+                    updatePreview();
+                });
+            }
+        }
+
+        // gradient controls
+        if(refs.gradientType) refs.gradientType.addEventListener('change', updatePreview);
+        if(refs.gradientAngle) refs.gradientAngle.addEventListener('input', updatePreview);
+        if(refs.gradientStop1) refs.gradientStop1.addEventListener('input', updatePreview);
+        if(refs.gradientStop2) refs.gradientStop2.addEventListener('input', updatePreview);
+
+        refs.imageFile.addEventListener('change', (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (ev) {
+                currentImage = ev.target.result;
+                refs.imageThumb.src = currentImage;
+                refs.imageThumb.style.display = 'block';
+                refs.imageUrl.value = '';
+                updatePreview();
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // new: multiple layers handlers
+        const addUrlBtn = document.getElementById('add-url-layer');
+        if(addUrlBtn){
+            addUrlBtn.addEventListener('click', ()=>{
+                const url = document.getElementById('bg-image-url').value.trim();
+                if(!url) return alert('Enter an image URL');
+                addLayer(url);
+                document.getElementById('bg-image-url').value = '';
+            });
+        }
+
+        const addEmpty = document.getElementById('add-empty-layer');
+        if(addEmpty){ addEmpty.addEventListener('click', ()=> addLayer('')); }
+
+        // when a file is selected, add as a new layer
+        const fileInput = document.getElementById('bg-image-file');
+        if(fileInput){
+            fileInput.addEventListener('change', (e)=>{
+                const file = e.target.files && e.target.files[0];
+                if(!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev){ addLayer(ev.target.result); fileInput.value = ''; };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        refs.clearImage.addEventListener('click', () => {
+            currentImage = '';
+            refs.imageThumb.src = '';
+            refs.imageThumb.style.display = 'none';
+            refs.imageFile.value = '';
+            refs.imageUrl.value = '';
+            updatePreview();
+        });
+
+        refs.copyCss.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(refs.cssOutput.textContent);
+                refs.copyCss.textContent = 'Copied!';
+                setTimeout(() => refs.copyCss.textContent = 'Copy CSS', 1200);
+            } catch (e) {
+                alert('Clipboard not available');
+            }
+        });
+
+        refs.resetBtn.addEventListener('click', () => {
+            refs.color.value = '#ffffff';
+            refs.attachment.value = 'scroll';
+            refs.repeat.value = 'repeat';
+            refs.size.value = 'auto';
+            refs.position.value = 'left top';
+            refs.origin.value = 'padding-box';
+            refs.clip.value = 'border-box';
+            refs.imageUrl.value = '';
+            refs.imageFile.value = '';
+            currentImage = '';
+            refs.imageThumb.src = '';
+            refs.imageThumb.style.display = 'none';
+            // clear layers
+            layers.length = 0;
+            renderLayers();
+            if(refs.scrollTextColor) refs.scrollTextColor.value = '#000000';
+            if(refs.scrollTextTransparent) refs.scrollTextTransparent.checked = false;
+            // reset gradient controls
+            if(refs.bgModeRadios){ for(const r of refs.bgModeRadios){ if(r.value === 'solid') r.checked = true; } }
+            if(refs.gradientControls) refs.gradientControls.style.display = 'none';
+            if(refs.gradientType) refs.gradientType.value = 'linear';
+            if(refs.gradientAngle) refs.gradientAngle.value = '90';
+            if(refs.gradientStop1) refs.gradientStop1.value = '#ffffff';
+            if(refs.gradientStop2) refs.gradientStop2.value = '#000000';
+            if(refs.blendMode) refs.blendMode.value = 'normal';
+            updatePreview();
+        });
+
+        // initial render
+    // if there is a default currentImage value in the URL input, add it as an initial layer
+    const initialUrl = document.getElementById('bg-image-url').value.trim();
+    if(initialUrl) addLayer(initialUrl);
+    renderLayers();
+    updatePreview();
+
+        // Accessibility: keyboard-friendly quick-change via keyboard numbers
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '?') alert('Tip: use the controls to experiment with background properties.');
+        });
+    </script>
+</body>
+
+</html>

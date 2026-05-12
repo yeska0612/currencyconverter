@@ -1,0 +1,38 @@
+  :root {
+    --color-accent: 50;
+      --size-0: 0.1rem;
+      --size-1: 0.2rem;
+      --size-2: 0.3rem;
+      --size-3: 0.5rem;
+      --size-4: 0.8rem;
+      --size-5: 1rem;
+      --size-6: 1.5rem;
+      --size-7: 2rem;
+
+      --color-black-0: #000000;
+      --color-black-1: #333;
+      --color-black-2: #555;
+      --color-black-5: #999;
+
+      --color-red-0:hsl(var(--color-accent), 100%, 50%);
+      --color-red-1:hsl(var(--color-accent), 100%, 60%);
+      --color-red-2:hsl(var(--color-accent), 100%, 70%);
+      --color-red-3:hsl(var(--color-accent), 100%, 80%);
+      --color-red-4:hsl(var(--color-accent), 100%, 90%);
+
+      --color-red-light:hsl(0, 100%, 80%); 
+      --color-red-dark:hsl(0, 100%, 10%);
+      --color-red-3:#f00;
+
+      --padding-default: var(--size-7);
+
+      --border-default: 1px dashed var(--color-black-5);
+
+      --border-radius-circle: 50%;
+      --border-radius-default: var(--size-4);
+      --border-radius-lg: var(--size-6);
+      --border-radius-md: var(--size-4);
+      --border-radius-sm: var(--size-2);
+
+
+  }

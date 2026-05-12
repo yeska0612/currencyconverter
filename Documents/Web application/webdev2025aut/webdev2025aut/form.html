@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        input{border:1px solid blue;}
+    </style>
+</head>
+
+<body>
+    <form>
+        <label>Name:
+            <input style="border:2px red solid;" type="text" id="name" name="name" required><br><br>
+        </label>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br><br>
+        <input type="hidden" name="age" value="120">
+        <label for="message">Message:</label><br>
+        <textarea id="message" name="message" rows="4" cols="50" required></textarea><br><br>
+        <label>MONGOL
+            <input type="checkbox" name="lang" id="" value="MN">
+        </label>
+        <input type="checkbox" name="lang" id="" value="US">
+        <input type="checkbox" name="lang" id="" value="JP">
+
+        <input type="radio" name="lang" id="" value="MN">
+        <input type="radio" name="lanwg" id="" value="US">
+        <input type="radio" name="s" id="" value="JP">
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>

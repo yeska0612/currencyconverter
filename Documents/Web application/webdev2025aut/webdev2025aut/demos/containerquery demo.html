@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Container Query & Container Units Demo</title>
+  <style>
+    :root{ --accent:#632E62; --muted:#6e7a8a; font-family:system-ui, -apple-system, 'Segoe UI', Roboto, Arial }
+    body{ margin:20px; background: #f7f9fc; color:#102030 }
+    h1{ color:var(--accent) }
+    .layout{ display:flex; gap:20px; align-items:flex-start }
+    .controls{ width:360px }
+    .card{ background:white; padding:14px; border-radius:10px; box-shadow:0 6px 18px rgba(12,18,30,0.06) }
+    .muted{ color:var(--muted); font-size:13px }
+
+  /* resizable container wrapper */
+  .resizer{ margin-top:12px; display:block; border:1px dashed rgba(16,32,48,0.08); padding:12px; resize: both; overflow:auto; min-width:120px; min-height:120px; width:420px; position:relative }
+  .grab-handle{ position:absolute; right:8px; bottom:8px; width:18px; height:18px; border-radius:4px; background: linear-gradient(135deg, rgba(16,32,48,0.06), rgba(16,32,48,0.12)); box-shadow: 0 2px 6px rgba(2,6,18,0.15); cursor: se-resize; z-index:10 }
+
+  /* Use container queries: make the card observe both inline and block size (width+height) */
+  .cq-wrapper{ container-type: size; container-name: demo-cq; }
+
+    /* styles that change based on container inline-size */
+    @container demo-cq (min-width: 540px){
+      .cq-grid{ display:flex; gap:12px; align-items:center }
+      .cq-grid .preview{ flex:1 }
+    }
+    @container demo-cq (max-width: 539.9px){
+      .cq-grid{ display:block }
+      .cq-grid .preview{ margin-bottom:8px }
+    }
+
+    /* height-based container queries (respond when the container's block-size changes) */
+    @container demo-cq (min-height: 280px) {
+      /* make preview taller and box larger when container has more vertical space */
+      .preview{ padding:18px; }
+      .cq-box{ height: 18cqh; }
+    }
+    @container demo-cq (max-height: 279.9px) {
+      .preview{ padding:10px; }
+      .cq-box{ height: 10cqh; }
+    }
+
+    .cq-grid{ display:block }
+    .preview{ background:linear-gradient(180deg,#ffffff,#fbfdff); border-radius:8px; padding:12px; border:1px solid rgba(16,32,48,0.04) }
+    .meta{ font-size:13px; color:var(--muted); margin-top:10px }
+
+    /* container unit example — scale type with cqw (container width) */
+    .cq-text{ font-weight:700; color:var(--accent); font-size: 3cqw; /* adjusts with container width */ }
+    /* fallback if container units not supported, size will be ignored; JS provides indicator */
+
+    /* example of container query unit based sizing for a box */
+    .cq-box{ width: 20cqw; height: 12cqh; background: linear-gradient(90deg, rgba(99,46,98,0.14), rgba(99,46,98,0.06)); border-radius:8px }
+
+    /* responsive helper where we switch layout using container queries */
+    .info{ font-size:13px }
+
+    .supports{ margin-top:10px; font-size:13px }
+  </style>
+</head>
+<body>
+  <h1>Container Queries & Container Units Demo</h1>
+  <p class="muted">Resize the container (drag its right edge) to see <code>@container</code> rules and <code>cqw</code>/<code>cqh</code> units in action.</p>
+
+  <div class="layout">
+    <div class="controls">
+      <div class="card">
+        <h1>Instructions</h1>
+        <p class="muted">Drag the resizable box on the right to observe changes. If your browser doesn't support container-units, the demo will show a notice.</p>
+        <div class="supports" id="supports"></div>
+        <div style="margin-top:12px">
+          <label for="text-unit">Text units</label>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:6px">
+            <select id="text-unit">
+              <option value="cqw">cqw (container-width)</option>
+              <option value="cqh">cqh (container-height)</option>
+              <option value="vw">vw</option>
+              <option value="vh">vh</option>
+              <option value="%">% (percent)</option>
+              <option value="px">px</option>
+              <option value="rem">rem</option>
+            </select>
+            <input id="text-mult" type="number" value="3" step="0.1" min="0.1" style="width:72px" />
+          </div>
+
+          <label for="box-unit" style="margin-top:10px; display:block">Box units</label>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:6px">
+            <select id="box-unit">
+              <option value="cqw">cqw</option>
+              <option value="cqh">cqh</option>
+              <option value="vw">vw</option>
+              <option value="vh">vh</option>
+              <option value="%">%</option>
+              <option value="px">px</option>
+              <option value="rem">rem</option>
+            </select>
+            <input id="box-w-mult" type="number" value="20" step="1" style="width:72px" />
+            <input id="box-h-mult" type="number" value="12" step="1" style="width:72px" />
+          </div>
+        </div>
+        <div class="meta">
+          <p><strong>Container width:</strong> <span id="cw">-</span></p>
+          <p><strong>Container height:</strong> <span id="ch">-</span></p>
+          <p><strong>1cqw (px):</strong> <span id="cqw">-</span> &nbsp; <strong>1cqh (px):</strong> <span id="cqh">-</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1">
+      <div class="resizer cq-wrapper" id="resizer" aria-label="Resizable container example">
+        <div class="grab-handle" id="grab"></div>
+        <div class="card cq-grid">
+          <div class="preview">
+            <div class="cq-text">Resizable</div>
+            <p class="muted">This area uses <code>container-type: inline-size</code> and the layout switches at 540px.</p>
+          </div>
+          <div class="preview meta" style="min-width:140px; display:flex; flex-direction:column; gap:10px; align-items:flex-start; justify-content:center">
+            <div class="cq-box" id="box"></div>
+            <div class="info">Box sized with <code>cqw</code>/<code>cqh</code> units.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// feature detection
+const supportsEl = document.getElementById('supports');
+const cwEl = document.getElementById('cw');
+const chEl = document.getElementById('ch');
+const cqwEl = document.getElementById('cqw');
+const cqhEl = document.getElementById('cqh');
+
+const resizer = document.getElementById('resizer');
+const box = document.getElementById('box');
+const textUnitSel = document.getElementById('text-unit');
+const textMult = document.getElementById('text-mult');
+const boxUnitSel = document.getElementById('box-unit');
+const boxWMult = document.getElementById('box-w-mult');
+const boxHMult = document.getElementById('box-h-mult');
+const cqText = document.querySelector('.cq-text');
+
+
+// detect support for container units by testing if 'cqw' is recognized in computed style
+function supportsContainerUnits(){
+  const el = document.createElement('div');
+  el.style.fontSize = '1cqw';
+  document.body.appendChild(el);
+  const computed = getComputedStyle(el).fontSize;
+  document.body.removeChild(el);
+  return computed && !computed.includes('cqw');
+}
+
+if(supportsContainerUnits()){
+  supportsEl.textContent = 'Your browser supports container units (cqw/cqh).';
+} else {
+  supportsEl.innerHTML = '<strong>Note:</strong> Your browser does not appear to support container units (cqw/cqh). The demo still shows @container behavior where supported.';
+}
+
+// observe size changes on the resizer container and update readouts
+const ro = new ResizeObserver(entries => {
+  for(const entry of entries){
+    const cr = entry.contentRect;
+    const w = Math.round(cr.width);
+    const h = Math.round(cr.height);
+    cwEl.textContent = w + 'px';
+    chEl.textContent = h + 'px';
+    // compute 1cqw and 1cqh by creating a test element inside the container
+    const test = document.createElement('div');
+    test.style.width = '1cqw';
+    test.style.height = '1cqh';
+    test.style.position = 'absolute'; test.style.visibility='hidden';
+    entry.target.appendChild(test);
+    const tw = Math.round(getComputedStyle(test).width.replace('px',''));
+    const th = Math.round(getComputedStyle(test).height.replace('px',''));
+    entry.target.removeChild(test);
+    cqwEl.textContent = tw + 'px';
+    cqhEl.textContent = th + 'px';
+  }
+});
+ro.observe(resizer);
+
+// apply units according to user selection
+function applyUnits(entry){
+  const cr = entry ? entry.contentRect : resizer.getBoundingClientRect();
+  const containerW = cr.width;
+  const containerH = cr.height;
+
+  // text
+  const tUnit = textUnitSel.value;
+  const tMul = parseFloat(textMult.value) || 1;
+  if(tUnit === 'cqw' && supportsContainerUnits()){
+    cqText.style.fontSize = `${tMul}cqw`;
+  } else if(tUnit === 'cqh' && supportsContainerUnits()){
+    cqText.style.fontSize = `${tMul}cqh`;
+  } else if(tUnit === 'vw'){
+    cqText.style.fontSize = `${tMul}vw`;
+  } else if(tUnit === 'vh'){
+    cqText.style.fontSize = `${tMul}vh`;
+  } else if(tUnit === '%'){
+    // percent relative to container width -> use calc with container width in px
+    cqText.style.fontSize = `${(tMul/100) * containerW}px`;
+  } else if(tUnit === 'px'){
+    cqText.style.fontSize = `${tMul}px`;
+  } else if(tUnit === 'rem'){
+    cqText.style.fontSize = `${tMul}rem`;
+  }
+
+  // box
+  const bUnit = boxUnitSel.value;
+  const bw = parseFloat(boxWMult.value) || 20;
+  const bh = parseFloat(boxHMult.value) || 12;
+  if(bUnit === 'cqw' && supportsContainerUnits()){
+    box.style.width = `${bw}cqw`;
+    box.style.height = `${bh}cqh`;
+  } else if(bUnit === 'cqh' && supportsContainerUnits()){
+    box.style.width = `${bw}cqh`;
+    box.style.height = `${bh}cqh`;
+  } else if(bUnit === 'vw'){
+    box.style.width = `${bw}vw`;
+    box.style.height = `${bh}vh`;
+  } else if(bUnit === 'vh'){
+    box.style.width = `${bw}vh`;
+    box.style.height = `${bh}vh`;
+  } else if(bUnit === '%'){
+    box.style.width = `${(bw/100) * containerW}px`;
+    box.style.height = `${(bh/100) * containerH}px`;
+  } else if(bUnit === 'px'){
+    box.style.width = `${bw}px`;
+    box.style.height = `${bh}px`;
+  } else if(bUnit === 'rem'){
+    box.style.width = `${bw}rem`;
+    box.style.height = `${bh}rem`;
+  }
+}
+
+// wire controls
+['change','input'].forEach(ev=>{
+  textUnitSel.addEventListener(ev, ()=>applyUnits());
+  textMult.addEventListener(ev, ()=>applyUnits());
+  boxUnitSel.addEventListener(ev, ()=>applyUnits());
+  boxWMult.addEventListener(ev, ()=>applyUnits());
+  boxHMult.addEventListener(ev, ()=>applyUnits());
+});
+
+// call once to initialize
+applyUnits();
+
+// drag-to-resize via grab-handle (mouse + touch)
+const grab = document.getElementById('grab');
+let dragging = false;
+let startX=0, startY=0, startW=0, startH=0;
+function startDrag(e){
+  dragging = true;
+  startX = e.touches ? e.touches[0].clientX : e.clientX;
+  startY = e.touches ? e.touches[0].clientY : e.clientY;
+  const rect = resizer.getBoundingClientRect();
+  startW = rect.width; startH = rect.height;
+  e.preventDefault();
+}
+function doDrag(e){
+  if(!dragging) return;
+  const cx = e.touches ? e.touches[0].clientX : e.clientX;
+  const cy = e.touches ? e.touches[0].clientY : e.clientY;
+  const dx = cx - startX; const dy = cy - startY;
+  resizer.style.width = Math.max(120, Math.round(startW + dx)) + 'px';
+  resizer.style.height = Math.max(120, Math.round(startH + dy)) + 'px';
+  applyUnits({ contentRect: { width: resizer.clientWidth, height: resizer.clientHeight }, target: resizer });
+}
+function endDrag(){ dragging = false; }
+grab.addEventListener('mousedown', startDrag);
+window.addEventListener('mousemove', doDrag);
+window.addEventListener('mouseup', endDrag);
+grab.addEventListener('touchstart', startDrag, { passive:false });
+window.addEventListener('touchmove', doDrag, { passive:false });
+window.addEventListener('touchend', endDrag);
+</script>
+</body>
+</html>

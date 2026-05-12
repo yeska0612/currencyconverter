@@ -1,0 +1,30 @@
+ :root {
+     --size-1: 0.1rem;
+     --size-2: 0.2rem;
+     --size-3: 0.4rem;
+     --size-4: 0.7rem;
+     --size-5: 0.9rem;
+     --size-6: 1.1rem;
+     --size-7: 1.4rem;
+     --size-8: 1.7rem;
+     --size-9: 2rem;
+
+     --color-black-0: #000;
+     --color-black-1: #333;
+     --color-black-2: #666;
+     --color-black-3: #999;
+     --color-black-4: #eee;
+
+     --color-red-0: #f00;
+     --color-red-1: #f33;
+     --color-red-2: #f66;
+     --color-red-3: #f99;
+     --color-red-4: #fcc;
+     --text-color: var(--color-black-1);
+     --color-border-default: var(--color-black-1);
+     --border-default: 1px solid var(--color-border-default);
+     --color-bg-default: var(--color-red-4);
+     --font-size-default: var(--size-2);
+     --font-body-size: var(--size-3);
+     --font-title-size: var(--size-9);
+ }

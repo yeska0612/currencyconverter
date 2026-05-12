@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./food3.css">
+    <script type="module" src="./comp/fd-categories.js"></script>
+    <script type="module" src="./comp/fd-category.js"></script>
+    <style>
+        html {
+            font-size: 12px;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template: "sid hdr inv" 10vh
+                "sid cat inv" auto
+                "sid food inv" auto / 10vw 1fr 10vw;
+            margin: 0 5vmin;
+            padding: var(--padding-default);
+        }
+
+        header {
+            grid-area: hdr;
+            padding: var(--padding-default);
+        }
+
+        aside {
+            grid-area: sid;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        header,
+        aside,
+        section {
+            border: var(--border-default);
+        }
+
+        .invoice {
+            grid-area: inv;
+        }
+
+        .categories {
+            grid-area: cat;
+            display: flex;
+            flex-wrap: wrap;
+            padding-top: 4rem;
+            justify-content: space-between;
+            gap: var(--size-7);
+            position: relative;
+
+        }
+
+        .categories>h2,
+        .food>h2 {
+            position: absolute;
+            top: -20px
+        }
+
+        .food {
+            grid-area: food;
+        }
+
+        .main-container>header {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .profilebox {
+            background-color: red;
+            display: flex;
+        }
+
+        .adv {
+            height: 100px;
+            background-color: red;
+        }
+
+        .categories>article {
+            border: var(--border-default);
+            display: flex;
+            gap: var(--size-3);
+            width: 13vw;
+            padding: var(--size-3);
+            border-radius: var(--border-radius-md);
+            align-items: center;
+            min-width: calc(32px + 1rem + 8ch);
+            max-width: 15vw;
+        }
+
+        .food {
+            display: flex;
+            flex-flow: row wrap;
+            gap: 1em;
+            position: relative;
+            margin-top: 2rem;
+            padding-top: 2rem;
+
+            article {
+                border: var(--border-default);
+                border-radius: var(--border-radius-default);
+                flex: 1 0 var(--size-9);
+
+                img {
+                    border-radius: var(--border-radius-circle);
+                }
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main-container {
+                grid-template: "hdr" 10vh
+                    "inv" auto
+                    "cat" auto
+                    "food" auto
+                    "sid" auto / 1fr;
+            }
+
+            .categories {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <header>
+            <div class="searchbox">
+                <input type="search" name="" id="">
+                <button>🔍</button>
+            </div>
+            <div class="profilebox">
+                <button>🌐</button>
+                <div>PROFILE</div>
+            </div>
+        </header>
+        <aside>
+            <nav>
+                <a href="/">🏠</a>
+                <ul>
+                    <li><a href="page1">Page1</a></li>
+                    <li><a href="page2">Page2</a></li>
+                    <li><a href="page3">Page3</a></li>
+                    <li><a href="page4">Page4</a></li>
+                    <li><a href="page5">Page5</a></li>
+                </ul>
+            </nav>
+            <div class="adv">
+                ...
+            </div>
+        </aside>
+        <section class="invoice">S1</section>
+        <fd-categories></fd-categories>
+        
+        <section class="food">
+            <h2>Popular</h2>
+            <article>
+                <h3>Food1</h3>
+                <input type="checkbox"><img src="https://picsum.photos/64/64?random=1" alt="">
+                <p>15.00</p>
+                <p>16.00</p>
+                <div>
+                    <p>4.5</p>
+                </div>
+            </article>
+            <article>
+                <h3>Food2</h3>
+                <input type="checkbox"><img src="https://picsum.photos/64/64?random=2" alt="">
+                <p>25.00</p>
+                <p>26.00</p>
+                <div>
+                    <p>4.5</p>
+                </div>
+            </article>
+            <article>
+                <h3>Food3</h3>
+                <input type="checkbox"><img src="https://picsum.photos/64/64?random=3" alt="">
+                <p>35.00</p>
+                <p>36.00</p>
+                <div>
+                    <p>4.5</p>
+                </div>
+            </article>
+            <article>
+                <h3>Food4</h3>
+                <input type="checkbox"><img src="https://picsum.photos/64/64?random=4" alt="">
+                <p>45.00</p>
+                <p>46.00</p>
+                <div>
+                    <p>4.5</p>
+                </div>
+            </article>
+            <article>
+                <h3>Food5</h3>
+                <input type="checkbox"><img src="https://picsum.photos/64/64?random=5" alt="">
+                <p>55.00</p>
+                <p>56.00</p>
+                <div>
+                    <p>4.5</p>
+                </div>
+            </article>
+            <article>
+                <h3>Food6</h3>
+                <input type="checkbox"><img src="https://picsum.photos/64/64?random=6" alt="">
+                <p>65.00</p>
+                <p>66.00</p>
+                <div>
+                    <p>4.5</p>
+                </div>
+            </article>
+        </section>
+    </div>
+</body>
+
+</html>

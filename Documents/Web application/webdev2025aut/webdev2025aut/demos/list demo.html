@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CSS List Properties Demo</title>
+  <style>
+  :root{ --accent:#632E62; --muted:#666; --preview-w:360px }
+    body{ font-family:system-ui, -apple-system, 'Segoe UI', Roboto, Arial; margin:20px }
+    h1{ color:var(--accent) }
+    .layout{ display:flex; gap:20px; align-items:flex-start }
+    .controls{ width:420px }
+    fieldset{ border:1px solid #eee; padding:12px; margin-bottom:12px }
+    label{ display:block; font-size:13px; margin:8px 0 4px }
+    select,input[type=text], input[type=color], input[type=number]{ width:100%; padding:6px; box-sizing:border-box }
+    .row{ display:flex; gap:8px }
+    .btn{ background:var(--accent); color:#fff; border:none; padding:8px 10px; border-radius:6px; cursor:pointer }
+    .preview{ flex:1 }
+    .preview-box{ width:var(--preview-w); border:1px solid #ddd; padding:12px; border-radius:6px }
+    .css-output{ white-space:pre; background:#f6f7fb; padding:8px; border:1px solid #eee; font-family:monospace; font-size:13px }
+    .items-list{ margin:0; padding-left:40px }
+    .marker-controls{ display:flex; gap:8px; align-items:center }
+    .small{ width:70px }
+  </style>
+</head>
+<body>
+  <h1>CSS List Properties Demo</h1>
+  <p class="muted">Experiment with list-related CSS properties and see the generated CSS.</p>
+  <div class="layout">
+    <div class="controls">
+      <fieldset>
+        <legend>Type & Position</legend>
+        <label for="list-type">list-style-type</label>
+        <select id="list-type">
+          <optgroup label="Unordered">
+            <option value="disc">disc</option>
+            <option value="circle">circle</option>
+            <option value="square">square</option>
+            <option value="none">none</option>
+          </optgroup>
+          <optgroup label="Ordered">
+            <option value="decimal">decimal</option>
+            <option value="decimal-leading-zero">decimal-leading-zero</option>
+            <option value="lower-alpha">lower-alpha</option>
+            <option value="upper-alpha">upper-alpha</option>
+            <option value="lower-roman">lower-roman</option>
+            <option value="upper-roman">upper-roman</option>
+          </optgroup>
+        </select>
+
+        <label for="list-position">list-style-position</label>
+        <select id="list-position">
+          <option value="outside">outside</option>
+          <option value="inside">inside</option>
+        </select>
+
+        <label for="use-image">list-style-image (URL)</label>
+        <div class="row">
+          <input id="list-image-url" type="url" placeholder="https://example.com/marker.png" value="https://cdn.iconscout.com/icon/free/png-24/free-gamepad-icon-svg-download-png-444757.png?f=webp&w=256" />
+          <button id="apply-image" class="btn" type="button">Use</button>
+        </div>
+        <label for="list-image-file" style="margin-top:8px">Or upload image</label>
+        <input id="list-image-file" type="file" accept="image/*" />
+        <div style="margin-top:8px"><button id="clear-image" class="btn">Clear image</button></div>
+
+      </fieldset>
+
+      <fieldset>
+        <legend>Marker (::marker) styling</legend>
+        <label for="marker-color">marker color</label>
+        <input id="marker-color" type="color" value="#000000" />
+        <label for="marker-size" style="margin-top:8px">marker font-size (px)</label>
+        <input id="marker-size" type="number" value="16" min="8" />
+      </fieldset>
+
+      <fieldset>
+        <legend>List items</legend>
+        <label for="ordered-toggle">Type</label>
+        <select id="ordered-toggle">
+          <option value="ul">Unordered (&lt;ul&gt;)</option>
+          <option value="ol">Ordered (&lt;ol&gt;)</option>
+        </select>
+        <label style="margin-top:8px">Manage items</label>
+        <div class="row">
+          <input id="new-item" type="text" placeholder="New item text" />
+          <button id="add-item" class="btn" type="button">Add</button>
+        </div>
+        <div style="margin-top:8px"><button id="remove-last" class="btn">Remove last</button></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Helpers</legend>
+        <div class="row">
+          <button id="copy-css" class="btn" type="button">Copy CSS</button>
+          <button id="reset" class="btn" type="button" style="background:#666">Reset</button>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="preview">
+      <div class="preview-box">
+        <div id="preview-area">
+          <h3>Preview</h3>
+          <div id="list-wrapper">
+            <ul class="items-list" id="items-list">
+              <li>Item one</li>
+              <li>Item two</li>
+              <li>Item three</li>
+            </ul>
+          </div>
+        </div>
+
+        <h4 style="margin-top:12px">Generated CSS</h4>
+        <div class="css-output" id="css-output"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const refs = {
+      listType: document.getElementById('list-type'),
+      listPosition: document.getElementById('list-position'),
+      listImageUrl: document.getElementById('list-image-url'),
+      listImageFile: document.getElementById('list-image-file'),
+      applyImageBtn: document.getElementById('apply-image'),
+      clearImageBtn: document.getElementById('clear-image'),
+      markerColor: document.getElementById('marker-color'),
+      markerSize: document.getElementById('marker-size'),
+      orderedToggle: document.getElementById('ordered-toggle'),
+      newItem: document.getElementById('new-item'),
+      addItemBtn: document.getElementById('add-item'),
+      removeLast: document.getElementById('remove-last'),
+      itemsList: document.getElementById('items-list'),
+      cssOutput: document.getElementById('css-output'),
+      copyCss: document.getElementById('copy-css'),
+      resetBtn: document.getElementById('reset')
+    };
+
+    let currentImage = '';
+
+    function updatePreview(){
+      const type = refs.listType.value;
+      const position = refs.listPosition.value;
+      const markerColor = refs.markerColor.value;
+      const markerSize = refs.markerSize.value + 'px';
+      const useImage = !!currentImage;
+
+      // swap between ol/ul
+      const wrapper = document.getElementById('list-wrapper');
+      const current = wrapper.querySelector('ul, ol');
+      const desiredTag = refs.orderedToggle.value === 'ol' ? 'ol' : 'ul';
+      if(!current || current.tagName.toLowerCase() !== desiredTag){
+        const items = Array.from(current ? current.querySelectorAll('li') : [] ).map(li=>li.textContent);
+        const newList = document.createElement(desiredTag);
+        newList.className = 'items-list';
+        items.forEach(t=>{ const li = document.createElement('li'); li.textContent = t; newList.appendChild(li); });
+        if(current) wrapper.replaceChild(newList, current); else wrapper.appendChild(newList);
+      }
+      const listEl = wrapper.querySelector(desiredTag);
+
+      // apply visual styles
+      listEl.style.listStyleType = useImage ? 'none' : type;
+      listEl.style.listStylePosition = position;
+      if(useImage){
+        // set marker via image using list-style-image if supported, otherwise use background on li marker fallback
+        listEl.style.listStyleImage = `url("${currentImage}")`;
+      } else {
+        listEl.style.listStyleImage = 'none';
+      }
+
+      // marker styling via ::marker isn't widely styleable; we can set color and font-size on the list which affects markers in many browsers
+      listEl.style.color = markerColor; // affects marker in many UAs
+      listEl.style.fontSize = markerSize; // affects marker size in many UAs
+
+      // update generated CSS for the list selector
+      let css = '';
+      css += `list-style-type: ${useImage ? 'none' : type};\n`;
+      css += `list-style-position: ${position};\n`;
+      if(useImage) css += `list-style-image: url("${currentImage}");\n`;
+      css += `/* Marker color and size (best-effort via color/font-size on the list or ::marker where supported) */\n`;
+      css += `color: ${markerColor};\nfont-size: ${markerSize};\n`;
+
+      // show CSS
+      refs.cssOutput.textContent = css;
+    }
+
+    // events
+    ['change','input'].forEach(e=>{
+      refs.listType.addEventListener(e, updatePreview);
+      refs.listPosition.addEventListener(e, updatePreview);
+      refs.markerColor.addEventListener(e, updatePreview);
+      refs.markerSize.addEventListener(e, updatePreview);
+      refs.orderedToggle.addEventListener(e, updatePreview);
+      refs.newItem.addEventListener('keydown', (ev)=>{ if(ev.key === 'Enter'){ refs.addItemBtn.click(); ev.preventDefault(); } });
+    });
+
+    refs.addItemBtn.addEventListener('click', ()=>{
+      const text = refs.newItem.value.trim();
+      if(!text) return;
+      const li = document.createElement('li'); li.textContent = text;
+      const list = document.querySelector('#list-wrapper ul, #list-wrapper ol');
+      list.appendChild(li);
+      refs.newItem.value = '';
+      updatePreview();
+    });
+
+    refs.removeLast.addEventListener('click', ()=>{
+      const list = document.querySelector('#list-wrapper ul, #list-wrapper ol');
+      if(list){ const last = list.querySelector('li:last-child'); if(last) last.remove(); updatePreview(); }
+    });
+
+    refs.applyImageBtn.addEventListener('click', ()=>{
+      const url = refs.listImageUrl.value.trim(); if(!url) return alert('Enter image URL');
+      currentImage = url; updatePreview(); refs.listImageUrl.value = '';
+    });
+
+    refs.listImageFile.addEventListener('change', (ev)=>{
+      const file = ev.target.files && ev.target.files[0]; if(!file) return; const reader = new FileReader();
+      reader.onload = (e)=>{ currentImage = e.target.result; updatePreview(); refs.listImageFile.value = ''; };
+      reader.readAsDataURL(file);
+    });
+
+    refs.clearImageBtn.addEventListener('click', ()=>{ currentImage = ''; updatePreview(); });
+
+    refs.copyCss.addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(refs.cssOutput.textContent); refs.copyCss.textContent = 'Copied!'; setTimeout(()=>refs.copyCss.textContent = 'Copy CSS',1200); }
+      catch{ alert('Clipboard not available'); }
+    });
+
+    refs.resetBtn.addEventListener('click', ()=>{
+      refs.listType.value = 'disc'; refs.listPosition.value = 'outside'; refs.listImageUrl.value = ''; refs.listImageFile.value = ''; currentImage = '';
+      refs.markerColor.value = '#000000'; refs.markerSize.value = 16; refs.orderedToggle.value = 'ul';
+      // restore sample items
+      const wrapper = document.getElementById('list-wrapper'); wrapper.innerHTML = '<ul class="items-list" id="items-list"><li>Item one</li><li>Item two</li><li>Item three</li></ul>';
+      updatePreview();
+    });
+
+    // initial
+    updatePreview();
+  </script>
+</body>
+</html>

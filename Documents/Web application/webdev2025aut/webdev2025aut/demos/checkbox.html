@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        article {
+            position: relative;
+            width: 300px;
+            padding: 16px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            /* backdrop-filter: blur(10px); */
+            color: white;
+            font-size: 2rem;
+            text-align: center;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+            margin: 0 auto;
+            input[type="checkbox"] {
+                display: none;
+            }
+            h2 {
+                font-size: 2rem;
+                color: black;
+            }
+
+            label {
+                position: relative;
+                left: -60px;
+                top: -20px;
+                filter:grayscale(1);
+                cursor:pointer;
+            }
+
+            label:hover{
+                filter: saturate(0.5);
+            }
+            &:has(input:checked) label {
+                filter: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <article>
+        <h2>Baraa</h2>
+        <img src="https://picsum.photos/200/100" alt="Random Image">
+        <label>❤️‍🔥
+            <input type="checkbox" name="" id="">
+        </label>
+    </article>
+</body>
+
+</html>

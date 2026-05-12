@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./food4global.css">
+    <script type="module" src="./comp/main-header.js"></script>
+    <script type="module" src="./comp/wd-main-categories.js"></script>
+    <script type="module" src="./comp/wd-foods.js"></script>
+    <script type="module" src="./comp/wd-category.js"></script>
+    <style>
+        html {
+            font-size: 24px;
+        }
+
+        .main-container {
+            /* border: 1px solid grey; */
+            margin: var(--size-4) var(--size-5);
+            padding: var(--size-4);
+            display: grid;
+            grid-template:
+                "asd head inv" 10vh
+                "asd cat inv" 1fr
+                "asd food inv" auto / 10vw 1fr 10vw;
+            gap: 1rem;
+        }
+
+        header,
+        aside,
+        section {
+            padding: var(--size-2);
+        }
+
+        header {
+            grid-area: head;
+            /* border: 1px solid blue; */
+            display: flex;
+            justify-content: space-between;
+        }
+
+        aside {
+            grid-area: asd;
+            /* border: 1px solid green; */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .categories {
+            grid-area: cat;
+            /* border: 1px solid orange; */
+            display: flex;
+            flex-wrap: wrap;
+            position: relative;
+            padding-top: 1.5rem;
+            gap: 1rem;
+
+            h2 {
+                position: absolute;
+                top: -10px;
+                font-size: 0.8rem;
+            }
+
+            article {
+                width: 10vw;
+                display: flex;
+                gap: 0.5rem;
+                padding: 8px;
+                border-radius: 8px;
+                border: 1px solid hsl(25, 100%, 50%);
+                background-color: var(--color-bg-default);
+
+                img {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 8px;
+                }
+            }
+        }
+
+
+
+        .foods {
+            grid-area: food;
+            /* border: 1px solid purple; */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .invoice {
+            grid-area: inv;
+            /* border: 1px solid red; */
+        }
+
+
+
+        h3 {
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        .foods>article {
+            /* width:17vw; */
+            margin: 4px;
+            padding: 8px;
+
+            font-size: 20px;
+            border: var(--border-default);
+            border-radius: 8px;
+            background-color: var(--color-bg-default);
+            flex: 1 0 17vw;
+        }
+
+        .foods>article div {
+            font-size: 1.2em;
+
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-border-default: var(--color-red-3);
+                --color-bg-default: var(--color-black-1);
+                --text-color: var(--color-red-4);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+            .main-container {
+                grid-template:
+                    "head" 10vh
+                    "cat" auto
+                    "food" 1fr
+                    "inv" auto
+                    "asd" auto / 100%
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <main-header></main-header>
+        
+        <aside>
+            <nav>🏦
+                <ul>
+                    <li><a href="page1.html">Menu1</a></li>
+                    <li><a href="page2.html">Menu2</a></li>
+                    <li><a href="page3.html">Menu3</a></li>
+                    <li><a href="page4.html">Menu4</a></li>
+                    <li><a href="page5.html">Menu5</a></li>
+                    <li><a href="page6.html">Menu6</a></li>
+                </ul>
+            </nav>
+            <div class="adv">ADV</div>
+        </aside>
+        <wd-main-categories></wd-main-categories>
+        <wd-foods></wd-foods>
+        <section class="invoice"></section>
+    </div>
+</body>
+
+</html>
